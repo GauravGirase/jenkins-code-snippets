@@ -1,0 +1,27 @@
+pipeline {
+    agent any
+    stages {
+        stage ('HTTP GitHubApi') {
+            steps {
+                script {
+                    def response = httpRequest url: 'https://api.github.com/user',
+                        authentication: 'gaurav_git_access'
+                    def json = readJSON text: response.content
+                    def username = json.login
+                    println("username: ${username}")
+                    def repoResponse = httpRequest url: "https://api.github.com/repos/GauravGirase/new_private_62899/commits/main",authentication: 'gaurav_git_access',
+                        consoleLogResponseBody: true
+                    def repoJson = readJSON text: repoResponse.content
+                        println("*********************")
+                        println("${repoJson}")
+                        println("**********************")
+                    repoJson.each {
+                            println("commit ssh id: $it")
+                        }
+
+        
+                }
+            }
+        }
+    }
+}
