@@ -1,0 +1,18 @@
+pipeline {
+    agent any
+    environment {
+    def param = readProperties file: 'some.properties'
+    msg = "${value.name}"
+  
+  }
+    
+    stages {
+        
+        stage('Printing an output') {
+            steps {
+              echo "${msg}"
+            }
+        }
+    
+    }
+}
