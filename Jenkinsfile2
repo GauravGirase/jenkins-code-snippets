@@ -1,7 +1,7 @@
 pipeline {
     agent any
     environment {
-    def param = readProperties file: 'some.properties'
+    def value = readProperties file: 'some.properties'
     msg = "${value.name}"
   
   }
