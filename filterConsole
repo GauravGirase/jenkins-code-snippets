@@ -1,0 +1,50 @@
+def csvRows = []
+
+pipeline {
+    agent any
+
+    stages {
+        // stage('checkout') {
+        //     steps {
+        //         git branch: 'main', url: 'https://github.com/GauravGirase/FACTMigra.git'
+        //     }
+        // }
+        stage('ReadCSV') {
+            steps {
+                script{
+                    def error = []
+                    // def logContent = Jenkins.getInstance().getItemByFullName("gradle").getBuildByNumber(20).logFile.text
+                    def logContent = Jenkins.getInstance().getItemByFullName("gradle")
+                    def result = logContent.getLastBuild().getResult().toString()
+                    println result
+                    println "**********************************************************"
+                    if (result == "FAILURE"){
+                        def console = logContent.getLastBuild().logFile.text
+                        for(row in console.split('\n')){
+                        
+                            if(row.contains(":") && row.contains("Exception")){
+                            
+                                def key = row.split(":")[0]
+                                def value = row.split(":")[1]
+                                error.push(value.trim())
+                            }
+                        }
+                        
+                        if (error.size()>0){
+                            
+                            csvRows.push("${result} : ${error.join(' ')}")
+                            println csvRows
+                        }
+                        
+                    }else{
+                        
+                        csvRows.push("${result}")
+                        println csvRows
+                        println "Go on"
+                    }
+
+                }
+            }
+        }
+    }
+}
